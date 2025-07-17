@@ -31,9 +31,40 @@ services:
       - postgres-network
     restart: unless-stopped
 
+  mongo:
+    image: mongo
+    container_name: mongo_container
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: kelaskaraditya1
+      MONGO_INITDB_ROOT_PASSWORD: Aditya1234
+    ports:
+      - "27018:27017"  # avoid conflict with local MongoDB
+    networks:
+      - mongo-network
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo_express_container
+    restart: always
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: kelaskaraditya1
+      ME_CONFIG_MONGODB_ADMINPASSWORD: Aditya1234
+      ME_CONFIG_MONGODB_SERVER: mongo_container
+      ME_CONFIG_MONGODB_URL: mongodb://kelaskaraditya1:Aditya1234@mongo_container:27017/
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongo
+    networks:
+      - mongo-network
+
 volumes:
   postgres:
   pgadmin:
 
 networks:
   postgres-network:
+    driver: bridge
+  mongo-network:
+    driver: bridge
