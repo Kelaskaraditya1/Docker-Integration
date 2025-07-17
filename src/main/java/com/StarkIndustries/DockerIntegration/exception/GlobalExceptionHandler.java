@@ -1,4 +1,4 @@
-package com.StarkIndustries.DockerIntegration.restApi.noSql.exception;
+package com.StarkIndustries.DockerIntegration.exception;
 
 import com.StarkIndustries.DockerIntegration.keys.Keys;
 import org.springframework.http.HttpHeaders;
@@ -14,15 +14,16 @@ import java.util.List;
 import java.util.Map;
 
 @RestControllerAdvice
-public class ExceptionHandler extends ResponseEntityExceptionHandler {
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
         Map<String,Object> body = new LinkedHashMap<>();
 
-        body.put(Keys.STATUS,status);
-
         body.put(Keys.TIME_STAMP,System.currentTimeMillis());
+
+        body.put(Keys.STATUS,status);
 
         List<String> errors = ex.getBindingResult()
                 .getFieldErrors()
