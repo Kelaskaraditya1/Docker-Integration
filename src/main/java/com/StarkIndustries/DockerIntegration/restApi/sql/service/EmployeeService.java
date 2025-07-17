@@ -34,7 +34,7 @@ public class EmployeeService {
         return this.employeeRepository.findAll();
     }
 
-    @Cacheable(key = "empId",value = "employee")
+    @Cacheable(key = "#empId",value = "employee")
     public Employee getEmployeeById(String empId) {
         if(this.employeeRepository.existsById(empId))
             return this.employeeRepository.findById(empId).get();
