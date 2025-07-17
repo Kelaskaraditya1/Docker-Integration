@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class EmployeeService {
@@ -19,7 +20,13 @@ public class EmployeeService {
     @CachePut(key = "#employee.empId",value = "employee")
     @CacheEvict(value = "allEmployees",allEntries = true)
     public Employee addEmployee(Employee employee) {
-        return this.employeeRepository.save(employee);
+
+        String empId = UUID.randomUUID().toString();
+        if(!this.employeeRepository.existsById(empId)){
+            employee.setEmpId(empId);
+            return this.employeeRepository.save(employee);
+        }
+        return null;
     }
 
     @Cacheable(value = "allEmployees")
@@ -28,8 +35,9 @@ public class EmployeeService {
     }
 
     @Cacheable(key = "empId",value = "employee")
-    public Employee getEmployeeById(Long empId) {
-        Optional<Employee> optionalEmployee = this.employeeRepository.findById(empId);
-        return optionalEmployee.orElse(null);
+    public Employee getEmployeeById(String empId) {
+        if(this.employeeRepository.existsById(empId))
+            return this.employeeRepository.findById(empId).get();
+        return null;
     }
 }
